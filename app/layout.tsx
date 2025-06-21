@@ -2,6 +2,8 @@ import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import Footer from "../components/footer";
+import Header from "../components/header";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,9 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={inter.className + " bg-[hsl(241,65%,32%)] text-[hsl(211,28%,18%)] min-h-screen"} suppressHydrationWarning={true}>
-        {/* Removed header with company name and address */}
+      <body className={inter.className + " bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 text-gray-800 min-h-screen"} suppressHydrationWarning={true}>
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   )

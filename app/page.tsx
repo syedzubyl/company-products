@@ -25,11 +25,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
+import Footer from "@/components/footer"
+import '@fontsource/merriweather/latin.css';
 
 export default function Home() {
   const contactRef = useRef<HTMLElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
   const scrollToContact = () => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -42,7 +46,6 @@ export default function Home() {
       content:
         "SRI MUTHARAMMAN ENGINEERING delivered exceptional quality components for our new vehicle line. Their attention to detail and precision cutting services exceeded our expectations.",
       rating: 5,
-      image: "/placeholder.svg?height=100&width=100",
     },
     {
       name: "TechDrive Motors",
@@ -50,7 +53,6 @@ export default function Home() {
       content:
         "We partnered with SRI MUTHARAMMAN ENGINEERING for our prototype components. Their welding quality and quick turnaround time helped us meet our tight launch schedule.",
       rating: 4,
-      image: "/placeholder.svg?height=100&width=100",
     },
     {
       name: "Global Auto Parts",
@@ -58,7 +60,13 @@ export default function Home() {
       content:
         "As a distributor, we need reliable manufacturing partners. SRI MUTHARAMMAN ENGINEERING consistently delivers high-quality parts on time and within budget.",
       rating: 5,
-      image: "/placeholder.svg?height=100&width=100",
+    },
+    {
+      name: "Precision Gears Pvt Ltd.",
+      role: "Industrial Gear Manufacturer",
+      content:
+        "Sri Mutharamman Engineering's gear cutting and machining services have been crucial to our production line. Their expertise and reliability are unmatched.",
+      rating: 5,
     },
   ]
 
@@ -70,508 +78,244 @@ export default function Home() {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)
   }
 
+  const allProducts = [
+    // Gear Cutting
+    { name: 'Gear Cutting', category: 'gearcutting', image: '/images/gear cutting1.png', desc: 'Precision gear manufacturing for automotive and industrial applications.', specs: ['Types: Spur, Helical, Bevel, Worm', 'Module Range: 0.5 - 10', 'Diameter: Up to 500mm'] },
+    { name: 'Gear Cutting', category: 'gearcutting', image: '/images/gear cutting2.png', desc: 'High-accuracy gear shaping and hobbing.', specs: ['Types: Spur, Helical', 'Module Range: 1 - 8', 'Diameter: Up to 300mm'] },
+    // Milling
+    { name: 'Milling', category: 'milling', image: '/images/Milling1.png', desc: 'High-precision milling for complex shapes and surfaces.', specs: ['Materials: Steel, Aluminum, Brass', 'Accuracy: ±0.02mm', 'Capacity: Up to 1m x 1m'] },
+    { name: 'Milling', category: 'milling', image: '/images/Milling2.png', desc: 'CNC milling for custom parts.', specs: ['Materials: All metals', 'Batch Size: 1-1000', 'Surface Finish: Ra 1.6'] },
+    // Tapping
+    { name: 'Tapping', category: 'tapping', image: '/images/Tapping1.png', desc: 'Thread creation inside holes for bolts and fasteners.', specs: ['Thread Sizes: M2 - M36', 'Depth: Up to 100mm', 'Types: Through, Blind'] },
+    { name: 'Tapping', category: 'tapping', image: '/images/Tapping2.png', desc: 'Automated tapping for high-volume production.', specs: ['Thread Sizes: M4 - M24', 'Batch Size: 10-10000', 'Accuracy: ±0.05mm'] },
+    // Threading
+    { name: 'Threading', category: 'threading', image: '/images/Threading1.png', desc: 'External and internal threading for all types of fasteners.', specs: ['Thread Types: Metric, UNC, UNF, BSP', 'Diameter: 2mm - 100mm', 'Length: Up to 500mm'] },
+    { name: 'Threading', category: 'threading', image: '/images/Threading2.png', desc: 'Precision threading for custom shafts.', specs: ['Thread Types: Metric, UNF', 'Diameter: 5mm - 50mm', 'Length: Up to 200mm'] },
+    // Machining
+    { name: 'Machining', category: 'machining', image: '/images/Machining1.png', desc: 'Comprehensive machining services for custom parts and prototypes.', specs: ['Processes: Turning, Milling, Drilling', 'Materials: All metals, plastics', 'Batch Size: 1 - 10,000 units'] },
+    // Drilling
+    { name: 'Drilling', category: 'drilling', image: '/images/Drilling1.png', desc: 'Precision drilling for holes of all sizes and depths.', specs: ['Diameter: 1mm - 50mm', 'Depth: Up to 300mm', 'Types: Through, Blind, Counterbore'] },
+    { name: 'Drilling', category: 'drilling', image: '/images/Drilling2.png ', desc: 'Automated drilling for high-volume production.', specs: ['Diameter: 2mm - 30mm', 'Batch Size: 100-10000', 'Accuracy: ±0.05mm'] },
+    // Cutting
+    { name: 'Cutting', category: 'cutting', image: '/images/Cutting1.png', desc: 'High-precision cutting for all types of materials and shapes.', specs: ['Materials: Steel, Aluminum, Plastics', 'Thickness: 0.5mm - 50mm', 'Methods: Sawing, Shearing'] },
+    { name: 'Cutting', category: 'cutting', image: '/images/cutting2.png', desc: 'Sheet metal cutting for automotive and industrial parts.', specs: ['Materials: All metals', 'Batch Size: 1-5000', 'Accuracy: ±0.1mm'] },
+  ];
+
+  const filteredProductsRaw = activeFilter === 'all' ? allProducts : allProducts.filter(p => p.category === activeFilter);
+  const filteredProducts = showAllProducts ? filteredProductsRaw : filteredProductsRaw.slice(0, 6);
+
   const handleProductSelect = (product: string) => {
     setSelectedProduct(product)
     scrollToContact()
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-gray-900 text-white p-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="text-xl md:text-2xl font-bold">
-            <span className="text-blue-400">SRI MUTHARAMMAN</span> ENGINEERING
-          </div>
-          <div className="hidden md:flex space-x-4 lg:space-x-8">
-            <Link href="#home" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              Home
-            </Link>
-            <Link href="#products" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              Products
-            </Link>
-            <Link href="#services" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              Services
-            </Link>
-            <Link href="#portfolio" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              Portfolio
-            </Link>
-            <Link href="#about" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              About
-            </Link>
-            <Link href="#contact" className="hover:text-blue-400 transition-colors duration-300 text-sm lg:text-base">
-              Contact
-            </Link>
-          </div>
-          <div className="md:hidden">
-            <button className="text-2xl" aria-label="Menu">☰</button>
-          </div>
-        </div>
-      </nav>
-
+    <>
       <main>
         {/* Hero Section */}
-        <section id="home" className="relative min-h-[80vh] md:min-h-screen flex items-center" style={{backgroundColor: '#024798'}}>
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/products.jpeg?height=1080&width=1920"
-              alt="Manufacturing machinery"
-              fill
-              className="object-cover mix-blend-overlay opacity-70"
-              priority
-            />
-            <div className="absolute inset-0" style={{backgroundColor: 'rgba(2,71,152,0.7)'}}></div>
-          </div>
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 animate-fadeIn text-white">
+        <section className="relative flex items-center justify-center min-h-[70vh] overflow-hidden bg-gradient-to-br from-blue-200 via-blue-300 to-blue-400">
+          {/* Floating Circles */}
+          <div className="absolute top-1/5 left-1/12 w-16 h-16 bg-white/20 rounded-full animate-float1 blur-md" />
+          <div className="absolute top-2/3 right-1/6 w-10 h-10 bg-white/20 rounded-full animate-float2 blur-md" />
+          <div className="absolute bottom-1/5 left-1/5 w-20 h-20 bg-white/20 rounded-full animate-float3 blur-md" />
+          <div className="relative z-10 flex flex-col items-center text-center px-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-blue-900 mb-4 drop-shadow-lg animate-slideInUp font-[Merriweather,serif]" style={{ fontFamily: 'Merriweather, serif', fontVariationSettings: '"ital" 0, "wdth" 100, "wght" 700' }}>
               SRI MUTHARAMMAN ENGINEERING
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl mb-2 animate-slideUp max-w-3xl mx-auto font-semibold text-white bg-[#e74c3c] px-4 py-2 rounded inline-block shadow-lg">
-              14/26, MANICKAM PILLAI STREET, MANNURPET, Chennai, Tamil Nadu, 600050
+            <p className="text-lg md:text-2xl font-light text-blue-900/90 mb-8 animate-slideInUp delay-200">
+              Precision Engineering Solutions | Expert Cutting, Trimming, Welding, Machining, Drilling & Joining Services
+              <br />
+              Delivering Excellence for Over 25 Years Across Tamil Nadu
             </p>
-            <p className="text-base sm:text-lg md:text-xl mb-6 md:mb-8 animate-slideUp max-w-3xl mx-auto text-white">
-              High-quality cutting, trimming, welding and joining services for automotive parts
-            </p>
-            <Button
-              size="lg"
-              className="bg-white hover:bg-blue-100 text-[#024798] px-6 md:px-8 py-4 md:py-6 rounded-lg text-base md:text-lg font-semibold animate-pulse hover:animate-none shadow"
+            <button
+              className="cta-button bg-gradient-to-r from-pink-400 to-pink-300 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:from-pink-500 hover:to-pink-400 transition-all duration-300 animate-slideInUp delay-400"
               onClick={scrollToContact}
             >
               Get a Quote
-            </Button>
+            </button>
           </div>
         </section>
 
         {/* Products Section */}
-        <section id="products" className="py-12 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">Our Products & Services</h2>
-            <p className="text-center text-gray-600 mb-8 md:mb-12 max-w-3xl mx-auto text-sm md:text-base">
+        <section id="products" className="py-8 md:py-20 bg-white animate-fadeInUp">
+          <div className="container mx-auto px-2 md:px-4">
+            <h2 className="text-xl md:text-3xl font-bold text-center mb-3 md:mb-4 animate-slideInUp">Our Products & Services</h2>
+            <p className="text-center text-gray-600 mb-6 md:mb-12 max-w-3xl mx-auto text-sm md:text-base animate-fadeIn delay-100">
               Delivering precision-engineered components for the automotive industry with state-of-the-art technology
               and expert craftsmanship.
             </p>
 
             {/* Product Filters */}
-            <div className="flex flex-wrap justify-center mb-6 md:mb-8 gap-2">
-              <Button className="filter-btn bg-blue-600 text-white text-sm md:text-base px-3 md:px-4 py-2" data-filter="all">
-                All
-              </Button>
-              <Button
-                className="filter-btn bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm md:text-base px-3 md:px-4 py-2"
-                variant="outline"
-                data-filter="cutting"
-              >
-                Cutting
-              </Button>
-              <Button
-                className="filter-btn bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm md:text-base px-3 md:px-4 py-2"
-                variant="outline"
-                data-filter="trimming"
-              >
-                Trimming
-              </Button>
-              <Button
-                className="filter-btn bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm md:text-base px-3 md:px-4 py-2"
-                variant="outline"
-                data-filter="welding"
-              >
-                Welding
-              </Button>
-              <Button
-                className="filter-btn bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm md:text-base px-3 md:px-4 py-2"
-                variant="outline"
-                data-filter="joining"
-              >
-                Joining
-              </Button>
+            <div className="flex flex-wrap justify-center mb-4 md:mb-8 gap-2 animate-fadeIn delay-200">
+              {[
+                { label: 'All', value: 'all' },
+                { label: 'Gear Cutting', value: 'gearcutting' },
+                { label: 'Milling', value: 'milling' },
+                { label: 'Tapping', value: 'tapping' },
+                { label: 'Threading', value: 'threading' },
+                { label: 'Machining', value: 'machining' },
+                { label: 'Drilling', value: 'drilling' },
+                { label: 'Cutting', value: 'cutting' },
+              ].map(btn => (
+                <Button
+                  key={btn.value}
+                  className={`filter-btn text-xs md:text-base px-2 md:px-4 py-2 ${activeFilter === btn.value ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                  variant={activeFilter === btn.value ? 'default' : 'outline'}
+                  onClick={() => { setActiveFilter(btn.value); setShowAllProducts(false); }}
+                  data-filter={btn.value}
+                >
+                  {btn.label}
+                </Button>
+              ))}
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-              {/* Product 1 */}
-              <div className="product-card cutting bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="Laser Cutting"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 gap-y-6">
+              {filteredProducts.map((product, idx) => (
+                <div key={idx} className={`product-card ${product.category} bg-white p-4 md:p-6 rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 border-2 border-[#4D55CC] animate-fadeInUp`} style={{ animationDelay: `${0.1 * idx}s` }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs md:text-sm font-bold text-[#4D55CC]">{idx + 1}</span>
+                    <span className="text-xs md:text-sm text-gray-400 capitalize">{product.category.replace(/ing$/, 'ing')}</span>
+                  </div>
+                  <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="object-cover rounded w-full h-full"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                  <h3 className="text-base md:text-xl font-bold mb-2">{product.name}</h3>
+                  <p className="text-gray-600 mb-4">{product.desc}</p>
+                  <div className="specs mb-4">
+                    {product.specs.map((spec, i) => (
+                      <p className="text-sm" key={i}>{spec}</p>
+                    ))}
+                  </div>
+                  <Button variant="link" className="text-blue-600 font-semibold hover:text-blue-800 p-0" onClick={() => handleProductSelect(product.name)}>
+                    Request Quote →
+                  </Button>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Precision Laser Cutting</h3>
-                <p className="text-gray-600 mb-4">
-                  High-accuracy laser cutting for metal parts with tolerances up to ±0.1mm
-                </p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> Steel, Aluminum, Copper
-                  </p>
-                  <p className="text-sm">
-                    <strong>Thickness:</strong> 0.5mm - 20mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Finish:</strong> Clean edges, no burrs
-                  </p>
+              ))}
+              {filteredProductsRaw.length > 6 && (
+                <div className="flex items-center justify-center h-full col-span-full">
+                  <Button onClick={() => setShowAllProducts(v => !v)} className="mt-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold">
+                    {showAllProducts ? 'Show Less' : 'View All'}
+                  </Button>
                 </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("Precision Laser Cutting")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
-
-              {/* Product 2 */}
-              <div className="product-card trimming bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="CNC Trimming"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-2">CNC Precision Trimming</h3>
-                <p className="text-gray-600 mb-4">Computer-controlled trimming for complex automotive components</p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> All metals, plastics
-                  </p>
-                  <p className="text-sm">
-                    <strong>Accuracy:</strong> ±0.05mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Capacity:</strong> Up to 1m x 1m
-                  </p>
-                </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("CNC Precision Trimming")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
-
-              {/* Product 3 */}
-              <div className="product-card welding bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="Spot Welding"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Automotive Spot Welding</h3>
-                <p className="text-gray-600 mb-4">High-speed resistance welding for car body panels and frames</p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> Steel, Stainless Steel
-                  </p>
-                  <p className="text-sm">
-                    <strong>Thickness:</strong> 0.5mm - 3mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Speed:</strong> Up to 60 welds/minute
-                  </p>
-                </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("Automotive Spot Welding")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
-
-              {/* Product 4 */}
-              <div className="product-card joining bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="Component Joining"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Component Joining</h3>
-                <p className="text-gray-600 mb-4">
-                  Precision joining of small automotive parts with mechanical fasteners
-                </p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> All metals
-                  </p>
-                  <p className="text-sm">
-                    <strong>Size Range:</strong> 5mm - 200mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Methods:</strong> Riveting, Bolting, Adhesives
-                  </p>
-                </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("Component Joining")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
-
-              {/* Product 5 */}
-              <div className="product-card cutting bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="Waterjet Cutting"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Waterjet Cutting</h3>
-                <p className="text-gray-600 mb-4">Cold-cutting process for heat-sensitive materials</p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> Metals, Composites, Glass
-                  </p>
-                  <p className="text-sm">
-                    <strong>Thickness:</strong> Up to 150mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Tolerance:</strong> ±0.2mm
-                  </p>
-                </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("Waterjet Cutting")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
-
-              {/* Product 6 */}
-              <div className="product-card welding bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 border-2 border-[#4D55CC]">
-                <div className="relative w-full h-48 mb-4 overflow-hidden rounded">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="MIG Welding"
-                    fill
-                    className="object-cover rounded transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-2">MIG Welding Services</h3>
-                <p className="text-gray-600 mb-4">Gas metal arc welding for structural components</p>
-                <div className="specs mb-4">
-                  <p className="text-sm">
-                    <strong>Materials:</strong> Steel, Aluminum
-                  </p>
-                  <p className="text-sm">
-                    <strong>Thickness:</strong> 0.8mm - 12mm
-                  </p>
-                  <p className="text-sm">
-                    <strong>Strength:</strong> Up to 500MPa
-                  </p>
-                </div>
-                <Button
-                  variant="link"
-                  className="text-blue-600 font-semibold hover:text-blue-800 p-0"
-                  onClick={() => handleProductSelect("MIG Welding Services")}
-                >
-                  Request Quote →
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </section>
 
         {/* Services Section */}
-        <section id="services" className="py-20 bg-[#f4f8fb]">
+        <section id="services" className="py-20 bg-[#f4f8fb] animate-fadeInUp">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4 text-[#024798]">Our Services</h2>
-            <p className="text-center text-gray-700 mb-12 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-4 text-[#024798] animate-slideInUp">Our Services</h2>
+            <p className="text-center text-gray-700 mb-12 max-w-3xl mx-auto animate-fadeIn delay-100">
               We offer comprehensive manufacturing solutions tailored to your specific requirements.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Cutting */}
-              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.1s` }}>
                 <Image src="/cutting 2.jpg" alt="Cutting" width={200} height={120} className="rounded mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-[#024798]">Cutting</h3>
-                <p className="text-gray-700 text-center">Accurate and efficient metal cutting services using advanced machinery for clean, precise results on all types of metals.</p>
+                <p className="text-gray-700 text-center">
+                  Accurate and efficient metal cutting services using advanced machinery for clean, precise results on all types of metals.
+                </p>
               </div>
               {/* Trimming */}
-              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.2s` }}>
                 <Image src="/trimming.jpg" alt="Trimming" width={200} height={120} className="rounded mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-[#024798]">Trimming</h3>
-                <p className="text-gray-700 text-center">Precision trimming of metal components to exact specifications, ensuring smooth edges and perfect fit for assembly.</p>
+                <p className="text-gray-700 text-center">
+                  Precision trimming of metal components to exact specifications, ensuring smooth edges and perfect fit for assembly.
+                </p>
               </div>
               {/* Welding */}
-              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.3s` }}>
                 <Image src="/welding2.jpg" alt="Welding" width={200} height={120} className="rounded mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-[#024798]">Welding</h3>
-                <p className="text-gray-700 text-center">Expert welding services for strong, durable joints in metal parts, including MIG, TIG, and spot welding for all applications.</p>
+                <p className="text-gray-700 text-center">
+                  Expert welding services for strong, durable joints in metal parts, including MIG, TIG, and spot welding for all applications.
+                </p>
               </div>
               {/* Joining */}
-              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.4s` }}>
                 <Image src="/joining.jpg" alt="Joining" width={200} height={120} className="rounded mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-[#024798]">Joining</h3>
-                <p className="text-gray-700 text-center">Advanced joining techniques for assembling complex components, ensuring reliability and structural integrity in every project.</p>
+                <p className="text-gray-700 text-center">
+                  Advanced joining techniques for assembling complex components, ensuring reliability and structural integrity in every project.
+                </p>
+              </div>
+              {/* Machining */}
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.5s` }}>
+                <Image src="/images/MACHINING.jpg" alt="Machining" width={200} height={120} className="rounded mb-4" />
+                <h3 className="text-xl font-bold mb-2 text-[#024798]">Machining</h3>
+                <p className="text-gray-700 text-center">
+                  Comprehensive machining services for custom parts and prototypes, including turning, milling, and drilling for all metals and plastics.
+                </p>
+              </div>
+              {/* Drilling */}
+              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `0.6s` }}>
+                <Image src="/images/DRILLING 1.jpg" alt="Drilling" width={200} height={120} className="rounded mb-4" />
+                <h3 className="text-xl font-bold mb-2 text-[#024798]">Drilling</h3>
+                <p className="text-gray-700 text-center">
+                  Precision drilling for holes of all sizes and depths, using advanced CNC and manual drilling machines for high accuracy.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Portfolio Section */}
-        <section id="portfolio" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4">Our Portfolio</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
-              Explore our previous projects and see the quality of our work.
-            </p>
-
-            <Tabs defaultValue="automotive" className="w-full max-w-4xl mx-auto">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="automotive">Automotive</TabsTrigger>
-                <TabsTrigger value="industrial">Industrial</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="automotive" className="space-y-4">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[
-                    "/wheel.jpg",
-                    "/flange bushing.jpg",
-                    "/flange.jpg",
-                    "/gearshaft.jpg",
-                    "/industrial-shafts.jpg",
-                    "/Tubesheets.jpg"
-                  ].map((img, idx) => (
-                    <div
-                      key={img}
-                      className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white border-2 border-[#4D55CC]"
-                    >
-                      <div className="relative h-64 w-full overflow-hidden bg-white">
-                        <Image
-                          src={img}
-                          alt={`Automotive Project ${idx + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110 rounded-t-lg"
-                        />
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#211C84]/90 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-b-lg">
-                        <h3 className="text-white font-bold">Automotive Component {idx + 1}</h3>
-                        <div className="flex items-center mt-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-4 w-4 ${star <= 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="industrial" className="space-y-4">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[
-                    "/flange.jpg",
-                    "/gearshaft.jpg",
-                    "/industrial-shafts.jpg",
-                    "/Tubesheets.jpg",
-                    "/thread screw rod.jpg",
-                    "/wheel.jpg"
-                  ].map((img, idx) => (
-                    <div
-                      key={img}
-                      className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white border-2 border-[#4D55CC]"
-                    >
-                      <div className="relative h-64 w-full overflow-hidden bg-white">
-                        <Image
-                          src={img}
-                          alt={`Industrial Project ${idx + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110 rounded-t-lg"
-                        />
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#211C84]/90 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-b-lg">
-                        <h3 className="text-white font-bold">Industrial Component {idx + 1}</h3>
-                        <div className="flex items-center mt-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-4 w-4 ${star <= 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-
         {/* Testimonials Section */}
-        <section className="py-20 bg-[#f4f8fb]">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4 text-[#211C84]">Client Testimonials</h2>
-            <p className="text-center text-[#4D55CC] mb-12 max-w-3xl mx-auto">
+        <section className="py-10 md:py-20 bg-[#f4f8fb] animate-fadeInUp">
+          <div className="container mx-auto px-2 md:px-4">
+            <h2 className="text-xl md:text-3xl font-bold text-center mb-3 md:mb-4 text-[#211C84] animate-slideInUp">Client Testimonials</h2>
+            <p className="text-center text-[#4D55CC] mb-6 md:mb-12 max-w-3xl mx-auto text-sm md:text-base animate-fadeIn delay-100">
               What our clients say about our engineering and manufacturing services.
             </p>
 
-            <div className="relative max-w-4xl mx-auto">
+            <div className="relative max-w-xl md:max-w-4xl mx-auto animate-fadeInUp delay-200">
               <Card className="border-2 border-[#B5A8D5] shadow-xl bg-white">
-                <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row gap-6 items-center">
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden shrink-0 border-4 border-[#4D55CC] bg-[#e3eef7]">
-                      <Image
-                        src={testimonials[currentTestimonial].image || "/placeholder.svg"}
-                        alt={testimonials[currentTestimonial].name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center mb-2">
+                <CardContent className="p-4 md:p-8">
+                  <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
+                    <div className="w-full">
+                      <div className="flex items-center mb-1 md:mb-2">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`h-5 w-5 ${i < testimonials[currentTestimonial].rating ? "text-yellow-400 fill-yellow-400" : "text-[#B5A8D5]"}`}
+                            className={`h-4 w-4 md:h-5 md:w-5 ${i < testimonials[currentTestimonial].rating ? "text-yellow-400 fill-yellow-400" : "text-[#B5A8D5]"}`}
                           />
                         ))}
                       </div>
-                      <p className="text-[#211C84] italic mb-4">"{testimonials[currentTestimonial].content}"</p>
+                      <p className="text-[#211C84] italic mb-2 md:mb-4 text-sm md:text-base">"{testimonials[currentTestimonial].content}"</p>
                       <div>
-                        <h4 className="font-bold text-lg text-[#4D55CC]">{testimonials[currentTestimonial].name}</h4>
-                        <p className="text-[#7A73D1]">{testimonials[currentTestimonial].role}</p>
+                        <h4 className="font-bold text-base md:text-lg text-[#4D55CC]">{testimonials[currentTestimonial].name}</h4>
+                        <p className="text-[#7A73D1] text-xs md:text-base">{testimonials[currentTestimonial].role}</p>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <div className="flex justify-center mt-6 gap-2">
-                <Button variant="outline" size="icon" className="rounded-full border-[#B5A8D5] text-[#4D55CC] hover:bg-[#e3eef7]" onClick={prevTestimonial}>
-                  <ChevronLeft className="h-5 w-5" />
+              <div className="flex flex-wrap justify-center mt-4 md:mt-6 gap-2">
+                <Button variant="outline" size="icon" className="rounded-full border-[#B5A8D5] text-[#4D55CC] hover:bg-[#e3eef7]">
+                  <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 {testimonials.map((_, index) => (
                   <Button
                     key={index}
                     variant="outline"
                     size="icon"
-                    className={`rounded-full border-[#B5A8D5] ${currentTestimonial === index ? "bg-[#4D55CC] text-white" : "text-[#4D55CC] hover:bg-[#e3eef7]"}`}
+                    className={`rounded-full border-[#B5A8D5] ${currentTestimonial === index ? "bg-[#4D55CC] text-white" : "text-[#4D55CC] hover:bg-[#e3eef7]"} text-xs md:text-base`}
                     onClick={() => setCurrentTestimonial(index)}
                   >
                     {index + 1}
                   </Button>
                 ))}
-                <Button variant="outline" size="icon" className="rounded-full border-[#B5A8D5] text-[#4D55CC] hover:bg-[#e3eef7]" onClick={nextTestimonial}>
-                  <ChevronRight className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="rounded-full border-[#B5A8D5] text-[#4D55CC] hover:bg-[#e3eef7]">
+                  <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </div>
             </div>
@@ -579,11 +323,11 @@ export default function Home() {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 bg-[#fafdff]">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-                <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl transform transition-transform duration-500 hover:scale-105">
+        <section id="about" className="py-10 md:py-20 bg-[#fafdff] animate-fadeInUp">
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+              <div className="w-full lg:w-1/2 mb-8 lg:mb-0 lg:pr-8 flex flex-col gap-6 animate-fadeInUp delay-100">
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl transform transition-transform duration-500 hover:scale-105 min-h-[180px] md:min-h-[240px]">
                   <Image
                     src="/products.jpeg"
                     alt="Factory"
@@ -591,96 +335,97 @@ export default function Home() {
                     className="rounded-lg object-cover"
                   />
                 </div>
+                {/* Map Field Below Image */}
+                <div className="w-full h-48 md:h-[300px] rounded-lg overflow-hidden shadow-lg mb-4">
+                  <iframe
+                    src="https://www.google.com/maps?q=Sri+Mutharamman+Engineering+No+126,+Korattur,+Ambattur,+Pothiamman+Koil+Street,+Chennai,+Tamil+Nadu,+600080&output=embed"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    title="Company Location"
+                    className="rounded-lg"
+                  ></iframe>
+                </div>
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=Sri+Mutharamman+Engineering+No+126,+Korattur,+Ambattur,+Pothiamman+Koil+Street,+Chennai,+Tamil+Nadu,+600080"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition mb-6"
+                >
+                  Get Directions
+                </a>
               </div>
-              <div className="md:w-1/2">
-                <h2 className="text-3xl font-bold mb-6 text-[#024798]">About Our Company</h2>
-                <p className="text-gray-700 mb-4">
-                  With over 15 years of experience in the automotive parts manufacturing industry, we specialize in
-                  precision machining services for small components.
+              <div className="w-full lg:w-1/2 animate-fadeInUp delay-200">
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 animate-slideInUp" style={{ color: 'rgba(0, 95, 137, 1)' }}>About <span>Sri Mutharamman Engineering</span></h2>
+                <p className="text-gray-700 mb-3 md:mb-4 animate-fadeIn delay-100 text-base md:text-lg">
+                  <span style={{ color: 'rgba(0, 95, 137, 1)', fontWeight: 600 }}>Sri Mutharamman Engineering</span> is a <span className="font-semibold">25 years 6 months old Proprietorship Firm</span> incorporated on <span className="font-semibold">10-Dec-1999</span>, having its registered office located at No.14/26 M, Mannurpet, Ambattur, Manickam Pillai Street, Chennai, Tamil Nadu.
                 </p>
-                <p className="text-gray-700 mb-4">
-                  Our state-of-the-art facility is equipped with the latest technology to deliver high-quality results
-                  with tight tolerances.
+                <p className="text-gray-700 mb-3 md:mb-4 animate-fadeIn delay-200 text-base md:text-lg">
+                  The major activity is <span className="font-semibold">Manufacturing</span>, sub-classified into <span className="font-semibold">Manufacture of machinery and equipment n.e.c.</span> and is primarily engaged in the <span className="font-semibold">Manufacture of other special purpose machinery n.e.c.</span>
                 </p>
-                <p className="text-gray-700 mb-6">
-                  We serve automotive manufacturers and suppliers across the region, providing reliable and
-                  cost-effective solutions.
+                <p className="text-gray-700 mb-4 md:mb-6 animate-fadeIn delay-300 text-base md:text-lg">
+                  <span style={{ color: 'rgba(0, 95, 137, 1)', fontWeight: 600 }}>Sri Mutharamman Engineering</span> is classified as a <span className="font-semibold">Micro enterprise</span> in the financial year 2024-25. It has its unit situated at Chennai, Tamil Nadu.
                 </p>
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-[#e3eef7] p-4 rounded-lg">
-                    <h4 className="font-bold text-lg mb-1 text-[#024798]">15+</h4>
-                    <p className="text-gray-700">Years Experience</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 md:mb-6 animate-fadeIn delay-400">
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Organisation Type</h4>
+                    <p className="text-gray-700 text-sm md:text-base">Proprietary</p>
                   </div>
-                  <div className="bg-[#e3eef7] p-4 rounded-lg">
-                    <h4 className="font-bold text-lg mb-1 text-[#024798]">500+</h4>
-                    <p className="text-gray-700">Projects Completed</p>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Date of Incorporation</h4>
+                    <p className="text-gray-700 text-sm md:text-base">10-Dec-1999</p>
                   </div>
-                  <div className="bg-[#e3eef7] p-4 rounded-lg">
-                    <h4 className="font-bold text-lg mb-1 text-[#024798]">50+</h4>
-                    <p className="text-gray-700">Team Members</p>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Major Activity</h4>
+                    <p className="text-gray-700 text-sm md:text-base">Manufacturing</p>
                   </div>
-                  <div className="bg-[#e3eef7] p-4 rounded-lg">
-                    <h4 className="font-bold text-lg mb-1 text-[#024798]">100+</h4>
-                    <p className="text-gray-700">Happy Clients</p>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Social Category</h4>
+                    <p className="text-gray-700 text-sm md:text-base">General</p>
+                  </div>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow sm:col-span-2">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Official Address</h4>
+                    <p className="text-gray-700 text-sm md:text-base">No.14/26, M, Mannurpet, Ambattur, Manickam Pillai Street, Chennai, Tamil Nadu, 600050</p>
+                  </div>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow sm:col-span-2">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">Branches</h4>
+                    <ul className="text-gray-700 list-disc ml-5 text-sm md:text-base">
+                      <li>Chennai, Thiruvallur, Tamil Nadu: No.14/26, Mannurpet, Manickam Pillai Street, Chennai, Thiruvallur, Tamil Nadu, 600050</li>
+                      <li>Chennai, Chennai, Tamil Nadu: No 126, Korattur, Ambattur, Pothiamman Koil Street, Chennai, Chennai, Tamil Nadu, 600080</li>
+                    </ul>
+                  </div>
+                  <div className="bg-[#e3eef7] p-4 rounded-lg shadow sm:col-span-2">
+                    <h4 className="font-bold text-base md:text-lg mb-1 text-[#024798]">National Industry Classification</h4>
+                    <ul className="text-gray-700 list-disc ml-5 text-sm md:text-base">
+                      <li>Manufacture of machinery and equipment n.e.c. &rarr; Manufacture of metal-forming machinery and machine tools &rarr; Manufacture of metal-forming machinery and machine tools n.e.c. (Manufacturing)</li>
+                      <li>Manufacture of machinery and equipment n.e.c. &rarr; Manufacture of other special-purpose machinery &rarr; Manufacture of other special-purpose machinery n.e.c. (Manufacturing)</li>
+                    </ul>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Location Section */}
-        <section className="py-20 bg-gray-100">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4">Our Location</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
-              Visit our state-of-the-art manufacturing facility or contact us directly.
-            </p>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-              <div className="lg:w-1/2">
-                <div className="bg-white p-6 rounded-lg shadow-lg h-full">
-                  <h3 className="text-xl font-bold mb-4 flex items-center">
-                    <MapPin className="h-5 w-5 mr-2 text-blue-600" />
-                    Company Address
-                  </h3>
-                  <p className="text-gray-600 mb-2">123 Manufacturing Drive</p>
-                  <p className="text-gray-600 mb-2">Industrial Park, Suite 500</p>
-                  <p className="text-gray-600 mb-2">Detroit, MI 48201</p>
-                  <p className="text-gray-600 mb-6">United States</p>
-
-                  <h3 className="text-xl font-bold mb-4">Contact Information</h3>
-                  <p className="text-gray-600 mb-2">Phone: (555) 123-4567</p>
-                  <p className="text-gray-600 mb-2">Email: info@precisionmachineworks.com</p>
-                  <p className="text-gray-600 mb-2">Hours: Monday-Friday, 8am-6pm EST</p>
-                </div>
-              </div>
-
-              <div className="lg:w-1/2 h-[400px] rounded-lg overflow-hidden shadow-lg">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d94371.54522464039!2d-83.1277807243164!3d42.33142789999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8824ca0110cb1d75%3A0x5776864e35b9c4d2!2sDetroit%2C%20MI!5e0!3m2!1sen!2sus!4v1616593075166!5m2!1sen!2sus"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  title="Company Location"
-                  className="rounded-lg"
-                ></iframe>
+                <a
+                  href="https://www.thecompanycheck.com/org/sri-mutharamman-engineering/9e12c536b3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 md:mt-4 px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold rounded-full shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all duration-300 animate-fadeIn delay-500 text-sm md:text-base"
+                >
+                  Check Company Details ↗
+                </a>
               </div>
             </div>
           </div>
         </section>
 
         {/* Contact Section */}
-        <section id="contact" ref={contactRef} className="py-20 bg-[#e3eef7] text-[#024798]">
+        <section id="contact" ref={contactRef} className="py-20 bg-[#e3eef7] text-[#024798] animate-fadeInUp">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4 text-[#211C84]">Contact Us</h2>
-            <p className="text-center text-[#4D55CC] mb-12 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-4 text-[#211C84] animate-slideInUp">Contact Us</h2>
+            <p className="text-center text-[#4D55CC] mb-12 max-w-3xl mx-auto animate-fadeIn delay-100">
               Reach out for a quote or to discuss your next project. Our team is ready to help you with all your engineering and manufacturing needs.
             </p>
 
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto animate-fadeInUp delay-200">
               <form className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block mb-2 text-[#211C84] font-semibold">
@@ -732,16 +477,7 @@ export default function Home() {
                     defaultValue={selectedProduct || undefined}
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                   >
-                    {[
-                      "Precision Laser Cutting",
-                      "CNC Precision Trimming",
-                      "Automotive Spot Welding",
-                      "Component Joining",
-                      "Waterjet Cutting",
-                      "MIG Welding Services",
-                      "Custom Project",
-                      "Other",
-                    ].map((product) => (
+                    {["Machining", "Drilling", "Cutting", "Gear Cutting", "Milling","Tapping", "Threading",  "Custom Project", "Other"].map((product) => (
                       <div
                         key={product}
                         className="flex items-center space-x-2 bg-[#f4f8fb] p-3 rounded-md border border-[#B5A8D5]"
@@ -807,38 +543,8 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-[#fafdff] text-[#211C84] py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4 text-[#4D55CC]">SRI MUTHARAMMAN ENGINEERING</h3>
-              <p className="text-[#7A73D1]">Your trusted partner in precision engineering and manufacturing solutions.</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4 text-[#4D55CC]">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><Link href="#home" className="text-[#7A73D1] hover:text-[#211C84]">Home</Link></li>
-                <li><Link href="#products" className="text-[#7A73D1] hover:text-[#211C84]">Products</Link></li>
-                <li><Link href="#services" className="text-[#7A73D1] hover:text-[#211C84]">Services</Link></li>
-                <li><Link href="#contact" className="text-[#7A73D1] hover:text-[#211C84]">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4 text-[#4D55CC]">Contact</h3>
-              <ul className="space-y-2 text-[#7A73D1]">
-                <li>Email: info@srimutharamman.com</li>
-                <li>Phone: +91 XXXXXXXXXX</li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-[#B5A8D5] text-center">
-            <p>&copy; 2024 SRI MUTHARAMMAN ENGINEERING. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   )
 }
 
+                      

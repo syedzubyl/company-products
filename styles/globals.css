@@ -92,3 +92,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.footer-primary {
+  color: #211C84 !important;
+}
+.footer-primary-bg {
+  background-color: #211C84 !important;
+  color: #fff !important;
+}
