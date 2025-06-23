@@ -34,6 +34,19 @@ export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
   const [showAllProducts, setShowAllProducts] = useState(false);
+  // WhatsApp floating button modal state
+  const [showWAForm, setShowWAForm] = useState(false);
+  const [waName, setWAName] = useState('');
+  const [waMsg, setWAMsg] = useState('');
+  // Contact form state for WhatsApp integration
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactCompany, setContactCompany] = useState('');
+  const [contactProduct, setContactProduct] = useState('');
+  const [contactDetails, setContactDetails] = useState('');
+  const [contactQuantity, setContactQuantity] = useState('');
+  const [contactTimeline, setContactTimeline] = useState('');
 
   const scrollToContact = () => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -108,6 +121,18 @@ export default function Home() {
     setSelectedProduct(product)
     scrollToContact()
   }
+
+  // GALLERY IMAGES ARRAY
+  const galleryImages = [
+    { src: '/flange bushing.jpg', label: 'Flange Bushing' },
+    { src: '/wheel.jpg', label: 'Weld Neck Flange' },
+    { src: '/thread screw rod.jpg', label: 'Thread Screw Rod' },
+    { src: '/industrial-shafts.jpg', label: 'Industrial Shafts' },
+    { src: '/joining.jpg', label: 'Joining' },
+    { src: '/gearshaft.jpg', label: 'Gear Shaft' },
+    { src: '/Tubesheets.jpg', label: 'Tube Sheets' },
+    { src: '/flange.jpg', label: 'Welded Flange' },
+  ];
 
   return (
     <>
@@ -268,6 +293,26 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Our Gallery Section */}
+        <section id="gallery" className="py-10 md:py-20 bg-gradient-to-br from-blue-50 via-blue-100 to-pink-50 animate-fadeInUp">
+          <div className="container mx-auto px-2 md:px-4">
+            <h2 className="text-xl md:text-3xl font-bold text-center mb-3 md:mb-4 text-[#211C84]  drop-shadow-lg">Our Gallery</h2>
+            <p className="text-center text-[#4D55CC] mb-6 md:mb-12 max-w-3xl mx-auto text-sm md:text-base animate-fadeIn delay-100">
+              Explore some of the products and components we have manufactured for our clients.
+            </p>
+            <div className="overflow-x-auto flex space-x-6 pb-4 px-8 md:px-20 scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-blue-100">
+              {galleryImages.map((img, idx) => (
+                <div key={idx} className="min-w-[260px] max-w-xs bg-white rounded-xl shadow-2xl hover:shadow-pink-200 hover:scale-105 transition-transform duration-500 border-2 border-[#4D55CC] flex-shrink-0 transform-gpu hover:-translate-y-2 animate-fadeInUp" style={{ animationDelay: `${0.1 * idx}s` }}>
+                  <div className="relative w-full h-48 overflow-hidden rounded-t-xl">
+                    <img src={img.src} alt={img.label} className="object-cover w-full h-full transition-transform duration-500 hover:scale-110" />
+                  </div>
+                  <div className="text-center font-semibold text-[#211C84] py-2">{img.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Testimonials Section */}
         <section className="py-10 md:py-20 bg-[#f4f8fb] animate-fadeInUp">
           <div className="container mx-auto px-2 md:px-4">
@@ -327,7 +372,8 @@ export default function Home() {
           <div className="container mx-auto px-2 md:px-4">
             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
               <div className="w-full lg:w-1/2 mb-8 lg:mb-0 lg:pr-8 flex flex-col gap-6 animate-fadeInUp delay-100">
-                <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl transform transition-transform duration-500 hover:scale-105 min-h-[180px] md:min-h-[240px]">
+                {/* Company Production Image */}
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl transition-transform duration-500 hover:scale-105 min-h-[180px] md:min-h-[240px] mb-4">
                   <Image
                     src="/products.jpeg"
                     alt="Factory"
@@ -348,13 +394,22 @@ export default function Home() {
                     className="rounded-lg"
                   ></iframe>
                 </div>
+                {/* Both Location Buttons Under the Map */}
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=27/9,+Periyar+Nagar,+Mannurpet,+Chennai,+Tamil+Nadu+600098,+India"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition mb-2"
+                >
+                  Get Location for Unit I
+                </a>
                 <a
                   href="https://www.google.com/maps/dir/?api=1&destination=Sri+Mutharamman+Engineering+No+126,+Korattur,+Ambattur,+Pothiamman+Koil+Street,+Chennai,+Tamil+Nadu,+600080"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition mb-6"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
                 >
-                  Get Directions
+                  Get Location for Unit II
                 </a>
               </div>
               <div className="w-full lg:w-1/2 animate-fadeInUp delay-200">
@@ -426,7 +481,20 @@ export default function Home() {
             </p>
 
             <div className="max-w-2xl mx-auto animate-fadeInUp delay-200">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={e => {
+                e.preventDefault();
+                const message =
+                  `Contact Request from Website:%0A` +
+                  `Name: ${contactName}%0A` +
+                  `Email: ${contactEmail}%0A` +
+                  `Phone: ${contactPhone}%0A` +
+                  `Company: ${contactCompany}%0A` +
+                  `Product/Service: ${contactProduct}%0A` +
+                  `Details: ${contactDetails}%0A` +
+                  `Quantity: ${contactQuantity}%0A` +
+                  `Timeline: ${contactTimeline}`;
+                window.open(`https://wa.me/917358547421?text=${encodeURIComponent(message)}`, '_blank');
+              }}>
                 <div>
                   <label htmlFor="name" className="block mb-2 text-[#211C84] font-semibold">
                     Your Name
@@ -436,6 +504,8 @@ export default function Home() {
                     id="name"
                     className="w-full px-4 py-2 rounded bg-white border border-[#B5A8D5] focus:outline-none focus:ring-2 focus:ring-[#4D55CC] text-[#211C84] placeholder-[#7A73D1]"
                     placeholder="Enter your name"
+                    value={contactName}
+                    onChange={e => setContactName(e.target.value)}
                   />
                 </div>
                 <div>
@@ -447,6 +517,8 @@ export default function Home() {
                     id="email"
                     className="w-full px-4 py-2 rounded bg-white border border-[#B5A8D5] focus:outline-none focus:ring-2 focus:ring-[#4D55CC] text-[#211C84] placeholder-[#7A73D1]"
                     placeholder="Enter your email"
+                    value={contactEmail}
+                    onChange={e => setContactEmail(e.target.value)}
                   />
                 </div>
                 <div>
@@ -458,6 +530,8 @@ export default function Home() {
                     id="phone"
                     className="w-full px-4 py-2 rounded bg-white border border-[#B5A8D5] focus:outline-none focus:ring-2 focus:ring-[#4D55CC] text-[#211C84] placeholder-[#7A73D1]"
                     placeholder="Enter your phone number"
+                    value={contactPhone}
+                    onChange={e => setContactPhone(e.target.value)}
                   />
                 </div>
                 <div>
@@ -469,6 +543,8 @@ export default function Home() {
                     id="company"
                     className="w-full px-4 py-2 rounded bg-white border border-[#B5A8D5] focus:outline-none focus:ring-2 focus:ring-[#4D55CC] text-[#211C84] placeholder-[#7A73D1]"
                     placeholder="Enter your company name"
+                    value={contactCompany}
+                    onChange={e => setContactCompany(e.target.value)}
                   />
                 </div>
                 <div>
@@ -476,6 +552,8 @@ export default function Home() {
                   <RadioGroup
                     defaultValue={selectedProduct || undefined}
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                    value={contactProduct}
+                    onValueChange={setContactProduct}
                   >
                     {["Machining", "Drilling", "Cutting", "Gear Cutting", "Milling","Tapping", "Threading",  "Custom Project", "Other"].map((product) => (
                       <div
@@ -497,13 +575,15 @@ export default function Home() {
                     rows={4}
                     placeholder="Please provide details about your project requirements, specifications, timeline, etc."
                     className="w-full px-4 py-2 rounded bg-white border border-[#B5A8D5] focus:outline-none focus:ring-2 focus:ring-[#4D55CC] text-[#211C84] placeholder-[#7A73D1]"
+                    value={contactDetails}
+                    onChange={e => setContactDetails(e.target.value)}
                   />
                 </div>
                 <div>
                   <label htmlFor="quantity" className="block mb-2 text-[#211C84] font-semibold">
                     Estimated Quantity
                   </label>
-                  <Select>
+                  <Select value={contactQuantity} onValueChange={setContactQuantity}>
                     <SelectTrigger className="w-full bg-white border-[#B5A8D5] focus:ring-[#4D55CC] text-[#211C84]">
                       <SelectValue placeholder="Select quantity range" />
                     </SelectTrigger>
@@ -520,7 +600,7 @@ export default function Home() {
                   <label htmlFor="timeline" className="block mb-2 text-[#211C84] font-semibold">
                     Project Timeline
                   </label>
-                  <Select>
+                  <Select value={contactTimeline} onValueChange={setContactTimeline}>
                     <SelectTrigger className="w-full bg-white border-[#B5A8D5] focus:ring-[#4D55CC] text-[#211C84]">
                       <SelectValue placeholder="Select timeline" />
                     </SelectTrigger>
@@ -543,6 +623,51 @@ export default function Home() {
           </div>
         </section>
       </main>
+      {/* WhatsApp Floating Button */}
+      <a
+        onClick={() => setShowWAForm(true)}
+        className="fixed z-50 bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center w-16 h-16 transition-all cursor-pointer"
+        title="Chat on WhatsApp"
+      >
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.52 3.48A12.07 12.07 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.23-3.48-8.52zM12 22c-1.85 0-3.66-.5-5.23-1.44l-.37-.22-3.67.96.98-3.58-.24-.37A9.94 9.94 0 0 1 2 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.2-7.6c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.28-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-.98 2.43.02 1.43 1.02 2.81 1.16 3 .14.19 2.01 3.07 4.88 4.19.68.29 1.21.46 1.62.59.68.22 1.3.19 1.79.12.55-.08 1.65-.67 1.88-1.32.23-.65.23-1.21.16-1.32-.07-.11-.25-.18-.53-.32z"/>
+        </svg>
+      </a>
+      {/* WhatsApp Modal */}
+      {showWAForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 className="text-lg font-bold mb-2">Send WhatsApp Message</h3>
+            <input
+              className="w-full border rounded px-2 py-1 mb-2"
+              placeholder="Your Name"
+              value={waName}
+              onChange={e => setWAName(e.target.value)}
+            />
+            <textarea
+              className="w-full border rounded px-2 py-1 mb-2"
+              placeholder="Your Message"
+              value={waMsg}
+              onChange={e => setWAMsg(e.target.value)}
+            />
+            <button
+              className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+              onClick={() => {
+                const url = `https://wa.me/917358547421?text=Hi%20Sir,%20My%20name%20is%20${encodeURIComponent(waName)}.%20${encodeURIComponent(waMsg)}`;
+                window.open(url, '_blank');
+              }}
+            >
+              Send Message
+            </button>
+            <button
+              className="w-full mt-2 text-gray-500"
+              onClick={() => setShowWAForm(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

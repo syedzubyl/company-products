@@ -20,6 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="icon" href="/images/logo1.png" type="image/png" />
+      </head>
       <body className={inter.className + " bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 text-gray-800 min-h-screen"} suppressHydrationWarning={true}>
         <Header />
         {children}
