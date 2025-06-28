@@ -132,6 +132,18 @@ export default function Home() {
     { src: '/gearshaft.jpg', label: 'Gear Shaft' },
     { src: '/Tubesheets.jpg', label: 'Tube Sheets' },
     { src: '/flange.jpg', label: 'Welded Flange' },
+    // Added from public/gallery
+    { src: '/gallery/bush.jpg', label: 'Bush' },
+    { src: '/gallery/couplings.jpg', label: 'Couplings' },
+    { src: '/gallery/Crane roller.jpeg', label: 'Crane Roller' },
+    { src: '/gallery/Die.jpeg', label: 'Die' },
+    { src: '/gallery/Drum pulley.jpeg', label: 'Drum Pulley' },
+    { src: '/gallery/drum roller.jpg', label: 'Drum Roller' },
+    { src: '/gallery/industrial shaft.jpg', label: 'Industrial Shaft' },
+    { src: '/gallery/MACHINING 2.jpg', label: 'Machining' },
+    { src: '/gallery/plate drilling.jpg', label: 'Plate Drilling' },
+    { src: '/gallery/Ring flange.jpeg', label: 'Ring Flange' },
+    { src: '/gallery/Screw conveyor.jpeg', label: 'Screw Conveyor' },
   ];
 
   return (
@@ -484,14 +496,14 @@ export default function Home() {
               <form className="space-y-6" onSubmit={e => {
                 e.preventDefault();
                 const message =
-                  `Contact Request from Website:%0A` +
-                  `Name: ${contactName}%0A` +
-                  `Email: ${contactEmail}%0A` +
-                  `Phone: ${contactPhone}%0A` +
-                  `Company: ${contactCompany}%0A` +
-                  `Product/Service: ${contactProduct}%0A` +
-                  `Details: ${contactDetails}%0A` +
-                  `Quantity: ${contactQuantity}%0A` +
+                  `Contact Request from Website:\n` +
+                  `Name: ${contactName}\n` +
+                  `Email: ${contactEmail}\n` +
+                  `Phone: ${contactPhone}\n` +
+                  `Company: ${contactCompany}\n` +
+                  `Product/Service: ${contactProduct}\n` +
+                  `Details: ${contactDetails}\n` +
+                  `Quantity: ${contactQuantity}\n` +
                   `Timeline: ${contactTimeline}`;
                 window.open(`https://wa.me/917358547421?text=${encodeURIComponent(message)}`, '_blank');
               }}>
